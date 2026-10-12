@@ -4,6 +4,7 @@ import sys
 import re
 import urllib.parse
 from pathlib import Path
+from dotenv import load_dotenv
 import httpx
 import ollama
 from app.rag.buscar_documentos import buscar_contexto
@@ -18,6 +19,7 @@ from app.tools.project_tools import (
 
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
 DOCUMENTS_DIR = BASE_DIR / "documents"
+load_dotenv(BASE_DIR / ".env")
 
 NOMBRE_ASISTENTE = "Equi"
 
@@ -219,25 +221,47 @@ def _es_ollama_disponible(base_url: str) -> bool:
         return False
 
 def _llamar_groq(messages: list[dict], api_key: str) -> dict:
-    """Llamada a la API gratuita de Groq (OpenAI-compatible) con modelos Llama ultra rápidos."""
+    """Llamada a la API gratuita de Groq (OpenAI-compatible) con selección automática de modelos activos."""
     url = "https://api.groq.com/openai/v1/chat/completions"
     headers = {
         "Authorization": f"Bearer {api_key}",
         "Content-Type": "application/json"
     }
     groq_messages = [{"role": m["role"], "content": m["content"]} for m in messages]
-    payload = {
-        "model": "llama-3.3-70b-versatile",
-        "messages": groq_messages,
-        "temperature": 0.2,
-        "max_tokens": 2048
-    }
-    r = httpx.post(url, headers=headers, json=payload, timeout=30.0)
-    if r.status_code != 200:
-        raise RuntimeError(f"Groq API error ({r.status_code}): {r.text}")
-    data = r.json()
-    choice = data.get("choices", [{}])[0].get("message", {})
-    return choice
+    modelos_candidatos = [
+        os.getenv("GROQ_MODEL", "openai/gpt-oss-120b"),
+        "openai/gpt-oss-120b",
+        "qwen/qwen3.8-27b",
+        "openai/gpt-oss-20b"
+    ]
+    # Eliminar duplicados manteniendo orden
+    modelos_unicos = list(dict.fromkeys(modelos_candidatos))
+
+    ultimo_error = ""
+    for modelo in modelos_unicos:
+        try:
+            payload = {
+                "model": modelo,
+                "messages": groq_messages,
+                "temperature": 0.2,
+                "max_tokens": 2048
+            }
+            r = httpx.post(url, headers=headers, json=payload, timeout=30.0)
+            if r.status_code == 200:
+                data = r.json()
+                choice = data.get("choices", [{}])[0].get("message", {})
+                contenido = choice.get("content", "")
+                if contenido:
+                    contenido = re.sub(r"<think>.*?</think>", "", contenido, flags=re.DOTALL).strip()
+                    choice["content"] = contenido
+                return choice
+            else:
+                ultimo_error = f"{r.status_code}: {r.text}"
+        except Exception as e:
+            ultimo_error = str(e)
+            continue
+
+    raise RuntimeError(f"Groq API error tras probar modelos disponibles: {ultimo_error}")
 
 def _llamar_gemini(messages: list[dict], api_key: str) -> dict:
     """Llamada a la API gratuita de Google Gemini (gemini-2.0-flash / gemini-1.5-flash)."""
