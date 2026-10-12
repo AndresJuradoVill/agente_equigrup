@@ -40,7 +40,7 @@ Desarrollado con arquitectura **MVVM (Model - View - ViewModel)** en el frontend
 
 ### 1. Clonar el repositorio
 ```bash
-git clone https://github.com/TU_USUARIO/agente_equigrup.git
+git clone https://github.com/AndresJuradoVill/agente_equigrup.git
 cd agente_equigrup
 ```
 
@@ -161,3 +161,4 @@ Para desplegar tu proyecto sin pagar servidores y asegurando que funcione desde 
 
 Proyecto desarrollado para **Equigrup**.  
 *Soluciones integrales de ingeniería mecánica y montaje industrial.*
+
