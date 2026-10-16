@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 from typing import Optional
 from fastapi import FastAPI, HTTPException, Depends, UploadFile, File, Form
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from pydantic import BaseModel
@@ -36,6 +37,14 @@ app = FastAPI(
     title="Asistente Equi - Equigrup API",
     description="API para el Asistente Inteligente de Gestión Técnica, Proyectos y Documentación de Equigrup",
     version="1.2.0"
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=False,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Servir estáticos de uploads y documentos
@@ -484,3 +493,14 @@ if FRONTEND_DIR.exists():
             str(FRONTEND_DIR / "index.html"),
             headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
         )
+
+@app.get("/monitoreo", include_in_schema=False)
+def panel_monitoreo_postman():
+    reporte_path = BASE_DIR / "tests" / "Reporte_Postman_Equigrup.html"
+    if reporte_path.exists():
+        return FileResponse(
+            str(reporte_path),
+            headers={"Cache-Control": "no-cache, no-store, must-revalidate"}
+        )
+    raise HTTPException(status_code=404, detail="Reporte de monitoreo no encontrado")
+
