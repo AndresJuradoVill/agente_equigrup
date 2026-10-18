@@ -1033,21 +1033,41 @@
 
     <!-- ARQUITECTURA MVVM (Model - View - ViewModel) -->
     <!-- 1. MODELOS (M): Servicios de datos y contratos REST -->
-    <script src="/static/js/models/AuthModel.js"></script>
-    <script src="/static/js/models/ProjectModel.js"></script>
-    <script src="/static/js/models/ChatModel.js"></script>
-    <script src="/static/js/models/BlogModel.js"></script>
+    <script src="/static/js/models/AuthModel.js?v=19.0"></script>
+    <script src="/static/js/models/ProjectModel.js?v=19.0"></script>
+    <script src="/static/js/models/ChatModel.js?v=19.0"></script>
+    <script src="/static/js/models/BlogModel.js?v=19.0"></script>
 
     <!-- 2. VIEWMODELS (VM): Estado reactivo, comandos y lógica de presentación -->
-    <script src="/static/js/viewmodels/AuthViewModel.js"></script>
-    <script src="/static/js/viewmodels/ProjectsViewModel.js"></script>
-    <script src="/static/js/viewmodels/ChatViewModel.js"></script>
-    <script src="/static/js/viewmodels/BlogViewModel.js"></script>
+    <script src="/static/js/viewmodels/AuthViewModel.js?v=19.0"></script>
+    <script src="/static/js/viewmodels/ProjectsViewModel.js?v=19.0"></script>
+    <script src="/static/js/viewmodels/ChatViewModel.js?v=19.0"></script>
+    <script src="/static/js/viewmodels/BlogViewModel.js?v=19.0"></script>
 
     <!-- 3. VISTAS (V): Enlace con el DOM y renderizado -->
-    <script src="/static/js/views/AppView.js"></script>
+    <script src="/static/js/views/AppView.js?v=19.0"></script>
 
     <!-- 4. BOOTSTRAPPER & EVENT BINDINGS -->
-    <script src="/static/app.js?v=16.0"></script>
+    <script src="/static/app.js?v=19.0"></script>
+    <script>
+        // Garantizar activación de vista Microservicios incluso ante caché de navegador
+        const _origCambiarVista = window.cambiarVista;
+        window.cambiarVista = function(vista) {
+            if (typeof _origCambiarVista === 'function') {
+                _origCambiarVista(vista);
+            }
+            if (vista === 'microservicios') {
+                document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+                document.querySelectorAll('.view-section').forEach(s => s.classList.remove('active'));
+                const btn = document.getElementById('navMicroservicios');
+                const sec = document.getElementById('vistaMicroservicios');
+                if (btn) btn.classList.add('active');
+                if (sec) sec.classList.add('active');
+                if (typeof cargarDatosMicroservicioAuditoria === 'function') {
+                    cargarDatosMicroservicioAuditoria();
+                }
+            }
+        };
+    </script>
 </body>
 </html>
