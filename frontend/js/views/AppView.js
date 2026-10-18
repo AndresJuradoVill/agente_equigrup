@@ -110,7 +110,8 @@ class AppView {
             'proyectos': { btn: 'navVer', sec: 'vistaProyectos' },
             'agregar': { btn: 'navAgregar', sec: 'vistaAgregar' },
             'multimedia': { btn: 'navMedia', sec: 'vistaMultimedia' },
-            'blog': { btn: 'navBlog', sec: 'vistaBlog' }
+            'blog': { btn: 'navBlog', sec: 'vistaBlog' },
+            'microservicios': { btn: 'navMicroservicios', sec: 'vistaMicroservicios' }
         };
 
         const target = mapaNav[vista];
@@ -130,6 +131,8 @@ class AppView {
         } else if (vista === 'blog') {
             this.blogVM.loadProjectOptions();
             this.blogVM.loadPosts();
+        } else if (vista === 'microservicios' && typeof cargarDatosMicroservicioAuditoria === 'function') {
+            cargarDatosMicroservicioAuditoria();
         }
     }
 

@@ -366,6 +366,9 @@
                 <button class="nav-btn" id="navBlog" onclick="cambiarVista('blog')">
                     <span class="icon">🌐</span> Blog & Banner Web
                 </button>
+                <button class="nav-btn" id="navMicroservicios" onclick="cambiarVista('microservicios')" style="border: 1px solid rgba(16, 185, 129, 0.35); background: rgba(16, 185, 129, 0.08);">
+                    <span class="icon">⚙️</span> Microservicios (MS 1 & 2)
+                </button>
             </div>
 
             <div class="status-card">
@@ -762,6 +765,161 @@
                         </div>
                     </div>
 
+                </div>
+            </section>
+
+            <!-- 6. VISTA: ARQUITECTURA DE MICROSERVICIOS (MS-1: INGENIERÍA & MS-2: AUDITORÍA) -->
+            <section id="vistaMicroservicios" class="view-section">
+                <header class="content-header">
+                    <div class="header-info">
+                        <div class="avatar" style="background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;">⚙️</div>
+                        <div>
+                            <h1>Ecosistema de Microservicios | Equigrup Cloud Architecture</h1>
+                            <p>Orquestación vía API Gateway + 2 Microservicios Independientes (MS-1: Cálculos API 686 | MS-2: Auditoría & Telemetría)</p>
+                        </div>
+                    </div>
+                    <div class="header-actions" style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        <a href="/ms/ingenieria/docs" target="_blank" class="btn-act" style="text-decoration: none; padding: 8px 14px; background: #0f172a; border: 1px solid #10b981; color: #34d399;">
+                            📘 Swagger MS-1 (:8001) ↗
+                        </a>
+                        <a href="/ms/auditoria/docs" target="_blank" class="btn-act" style="text-decoration: none; padding: 8px 14px; background: #0f172a; border: 1px solid #38bdf8; color: #38bdf8;">
+                            📘 Swagger MS-2 (:8002) ↗
+                        </a>
+                        <a href="/monitoreo" target="_blank" class="btn-act" style="text-decoration: none; padding: 8px 14px; background: #ff6c37; border: 1px solid #ff6c37; color: #fff; font-weight: 700;">
+                            📡 Monitor Postman en Vivo ↗
+                        </a>
+                    </div>
+                </header>
+
+                <div style="padding: 20px; overflow-y: auto; max-height: calc(100vh - 105px);">
+                    <!-- TARJETAS DE TOPOLOGÍA DE LOS 3 SERVICIOS -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; margin-bottom: 20px;">
+                        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #3b82f6; border-radius: 10px; padding: 14px 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="color: #60a5fa; font-size: 13px;">🌐 API GATEWAY & CORE RAG</strong>
+                                <span style="background: #065f46; color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">● ONLINE (:8000)</span>
+                            </div>
+                            <p style="font-size: 12px; color: #94a3b8; margin: 6px 0 0 0;">Enrutador central, Agente IA Equi (LLM + RAG SQLite) y Gestión de 52 Proyectos.</p>
+                        </div>
+
+                        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #10b981; border-radius: 10px; padding: 14px 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="color: #34d399; font-size: 13px;">⚙️ MICROSERVICIO 1: ms-ingenieria</strong>
+                                <span style="background: #065f46; color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">● ONLINE (:8001)</span>
+                            </div>
+                            <p style="font-size: 12px; color: #94a3b8; margin: 6px 0 0 0;">Motor matemático de Grouting Epóxico (Chockfast Red) y Tolerancias API RP 686 / ISO 10816.</p>
+                        </div>
+
+                        <div style="background: #1e293b; border: 1px solid #334155; border-left: 4px solid #f59e0b; border-radius: 10px; padding: 14px 16px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <strong style="color: #fbbf24; font-size: 13px;">🛡️ MICROSERVICIO 2: ms-auditoria</strong>
+                                <span style="background: #065f46; color: #34d399; font-size: 11px; padding: 2px 8px; border-radius: 12px; font-weight: 700;">● ONLINE (:8002)</span>
+                            </div>
+                            <p style="font-size: 12px; color: #94a3b8; margin: 6px 0 0 0;">Trazabilidad inmutable y telemetría con patrón <code>Database-per-Service</code> (<code>ms_auditoria.db</code>).</p>
+                        </div>
+                    </div>
+
+                    <!-- INTERFAZ INTERACTIVA DEL MICROSERVICIO 1 (ms-ingenieria) -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(420px, 1fr)); gap: 18px; margin-bottom: 22px;">
+                        <!-- CALCULADORA 1: GROUTING EPÓXICO -->
+                        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px;">
+                            <h3 style="margin: 0 0 6px 0; color: #f8fafc; font-size: 15px;">🧪 MS-1: Calculadora de Dosificación de Grout (API RP 686 Cap. 5)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin: 0 0 14px 0;">Endpoint: <code>POST /ms/ingenieria/calcular-grout</code></p>
+                            <form onsubmit="ejecutarCalculoGroutMS1(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Largo del Skid (m)</label>
+                                        <input type="number" step="0.01" id="msGroutLargo" value="2.40" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Ancho del Skid (m)</label>
+                                        <input type="number" step="0.01" id="msGroutAncho" value="1.10" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Espesor de Capa (mm)</label>
+                                        <input type="number" step="1" id="msGroutEspesor" value="50" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Temperatura Ambiente (°C)</label>
+                                        <input type="number" step="0.5" id="msGroutTemp" value="24.0" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary-action" style="width: 100%; margin-top: 6px; padding: 10px;">
+                                    ⚡ Invocar Microservicio 1 (Calcular Grout)
+                                </button>
+                            </form>
+                            <div id="resMsGrout" style="margin-top: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 12.5px; display: none;"></div>
+                        </div>
+
+                        <!-- CALCULADORA 2: ALINEACIÓN LÁSER Y VIBRACIÓN -->
+                        <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px;">
+                            <h3 style="margin: 0 0 6px 0; color: #f8fafc; font-size: 15px;">🔬 MS-1: Evaluador de Alineación Láser & Vibración (API 686 & ISO 10816)</h3>
+                            <p style="font-size: 12px; color: #94a3b8; margin: 0 0 14px 0;">Endpoint: <code>POST /ms/ingenieria/evaluar-alineacion</code></p>
+                            <form onsubmit="ejecutarEvaluacionAlineacionMS1(event)">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Equipo Rotativo</label>
+                                        <input type="text" id="msAlinEquipo" value="Compresor Ariel JGK/4" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Velocidad (RPM)</label>
+                                        <input type="number" id="msAlinRpm" value="1800" required>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label>Offset Paralelo (mils)</label>
+                                        <input type="number" step="0.1" id="msAlinParalelo" value="1.4" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label>Vibración (mm/s RMS)</label>
+                                        <input type="number" step="0.1" id="msAlinVibracion" value="1.9" required>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary-action" style="width: 100%; margin-top: 6px; padding: 10px; background: #059669; border-color: #10b981;">
+                                    🔬 Invocar Microservicio 1 (Evaluar Norma API 686)
+                                </button>
+                            </form>
+                            <div id="resMsAlineacion" style="margin-top: 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 12px; font-size: 12.5px; display: none;"></div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL EN VIVO DEL MICROSERVICIO 2 (ms-auditoria) -->
+                    <div style="background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 18px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h3 style="margin: 0; color: #f8fafc; font-size: 15.5px;">🛡️ MS-2: Bitácora Inmutable de Auditoría y Telemetría en Tiempo Real</h3>
+                                <p style="font-size: 12px; color: #94a3b8; margin: 4px 0 0 0;">Endpoints: <code>GET /ms/auditoria/bitacora</code> | <code>GET /ms/auditoria/metricas</code> — Base de datos propia: <code>ms_auditoria.db</code></p>
+                            </div>
+                            <button class="btn-secondary" onclick="cargarDatosMicroservicioAuditoria()" style="padding: 7px 14px; font-size: 12.5px;">
+                                🔄 Refrescar Bitácora MS-2
+                            </button>
+                        </div>
+
+                        <div id="msAuditoriaMetricasBox" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin-bottom: 14px;"></div>
+
+                        <div style="overflow-x: auto;">
+                            <table style="width: 100%; border-collapse: collapse; font-size: 12.5px; text-align: left;">
+                                <thead>
+                                    <tr style="background: #0f172a; color: #94a3b8; border-bottom: 1px solid #334155;">
+                                        <th style="padding: 10px;">ID</th>
+                                        <th style="padding: 10px;">Fecha / Hora</th>
+                                        <th style="padding: 10px;">Servicio Origen</th>
+                                        <th style="padding: 10px;">Categoría</th>
+                                        <th style="padding: 10px;">Usuario</th>
+                                        <th style="padding: 10px;">Acción Auditada</th>
+                                        <th style="padding: 10px;">Latencia</th>
+                                        <th style="padding: 10px;">Estado</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="msAuditoriaTablaBody">
+                                    <tr><td colspan="8" style="padding: 16px; text-align: center; color: #94a3b8;">Cargando eventos del Microservicio 2...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </section>
 

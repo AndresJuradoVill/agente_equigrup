@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  api-gateway:
+    build: .
+    container_name: equigrup-api-gateway
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      - MS_INGENIERIA_URL=http://ms-ingenieria:8001
+      - MS_AUDITORIA_URL=http://ms-auditoria:8002
+    depends_on:
+      - ms-ingenieria
+      - ms-auditoria
+    networks:
+      - equigrup-net
+
+  ms-ingenieria:
+    build: .
+    container_name: equigrup-ms-ingenieria
+    command: uvicorn microservices.ms_ingenieria.main_ingenieria:app_ingenieria --host 0.0.0.0 --port 8001
+    ports:
+      - "8001:8001"
+    networks:
+      - equigrup-net
+
+  ms-auditoria:
+    build: .
+    container_name: equigrup-ms-auditoria
+    command: uvicorn microservices.ms_auditoria.main_auditoria:app_auditoria --host 0.0.0.0 --port 8002
+    ports:
+      - "8002:8002"
+    volumes:
+      - ./data:/app/data
+    networks:
+      - equigrup-net
+
+networks:
+  equigrup-net:
+    driver: bridge

@@ -291,6 +291,75 @@
           "path": ["api", "blog"]
         }
       }
+    },
+    {
+      "name": "9. Microservicio 1 (ms-ingenieria) - Cálculo Grout Epóxico API 686",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Estado HTTP es 200 OK en Microservicio 1', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Calcula kits comerciales de Chockfast Red y curva térmica', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.microservicio).to.eql('ms-ingenieria');",
+              "    pm.expect(jsonData.resultados_calculo.kits_comerciales_requeridos).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"largo_m\": 2.4,\n  \"ancho_m\": 1.1,\n  \"espesor_mm\": 50.0,\n  \"temperatura_ambiente_c\": 24.0,\n  \"producto\": \"Chockfast Red\"\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/ms/ingenieria/calcular-grout",
+          "host": ["{{base_url}}"],
+          "path": ["ms", "ingenieria", "calcular-grout"]
+        }
+      }
+    },
+    {
+      "name": "10. Microservicio 2 (ms-auditoria) - Telemetría y Bitácora Database-per-Service",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "exec": [
+              "pm.test('Estado HTTP es 200 OK en Microservicio 2', function () {",
+              "    pm.response.to.have.status(200);",
+              "});",
+              "pm.test('Retorna métricas de auditoría y estado 100% Operativo', function () {",
+              "    var jsonData = pm.response.json();",
+              "    pm.expect(jsonData.microservicio).to.eql('ms-auditoria');",
+              "    pm.expect(jsonData.resumen.total_eventos_auditados).to.be.above(0);",
+              "});"
+            ],
+            "type": "text/javascript"
+          }
+        }
+      ],
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/ms/auditoria/metricas",
+          "host": ["{{base_url}}"],
+          "path": ["ms", "auditoria", "metricas"]
+        }
+      }
     }
   ]
 }

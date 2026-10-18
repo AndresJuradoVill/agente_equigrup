@@ -647,3 +647,130 @@ function mostrarNombreArchivo(inputId, labelId) {
         label.textContent = "📄 Archivo seleccionado: " + input.files[0].name;
     }
 }
+
+// H. ORQUESTACIÓN DE MICROSERVICIOS (MS-1: INGENIERÍA & MS-2: AUDITORÍA)
+async function ejecutarCalculoGroutMS1(event) {
+    event.preventDefault();
+    const box = document.getElementById('resMsGrout');
+    box.style.display = 'block';
+    box.innerHTML = '⏳ Consultando Microservicio 1 (<code>POST /ms/ingenieria/calcular-grout</code>)...';
+
+    const payload = {
+        largo_m: parseFloat(document.getElementById('msGroutLargo').value),
+        ancho_m: parseFloat(document.getElementById('msGroutAncho').value),
+        espesor_mm: parseFloat(document.getElementById('msGroutEspesor').value),
+        temperatura_ambiente_c: parseFloat(document.getElementById('msGroutTemp').value),
+        producto: "Chockfast Red"
+    };
+
+    try {
+        const resp = await fetch('/ms/ingenieria/calcular-grout', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        const r = data.resultados_calculo;
+        const d = data.diagnostico_ingenieria;
+
+        box.innerHTML = `
+            <div style="color: #34d399; font-weight: 700; margin-bottom: 6px;">✔ Respuesta de ${data.microservicio} (${data.norma_referencia}):</div>
+            <div>• <strong>Volumen Neto / Con Desperdicio (8%):</strong> ${r.volumen_neto_litros} L / <strong>${r.volumen_con_desperdicio_8pct_litros} L</strong></div>
+            <div>• <strong>Kits Comerciales Requeridos (${data.producto}):</strong> <span style="color: #38bdf8; font-weight: 800; font-size: 14px;">${r.kits_comerciales_requeridos} Kits</span> (${r.rendimiento_por_kit_litros} L/kit)</div>
+            <div>• <strong>Tiempo de Curado Estimado:</strong> ${r.tiempo_curado_estimado_horas} horas</div>
+            <div>• <strong>Estado Térmico:</strong> <span style="color: #fbbf24;">${d.estado_termico}</span></div>
+            <div style="margin-top: 4px; color: #cbd5e1;">💡 <em>${d.recomendacion_campo}</em></div>
+        `;
+        cargarDatosMicroservicioAuditoria();
+    } catch (e) {
+        box.innerHTML = `<span style="color: #ef4444;">❌ Error comunicando con MS-1: ${e.message}</span>`;
+    }
+}
+
+async function ejecutarEvaluacionAlineacionMS1(event) {
+    event.preventDefault();
+    const box = document.getElementById('resMsAlineacion');
+    box.style.display = 'block';
+    box.innerHTML = '⏳ Consultando Microservicio 1 (<code>POST /ms/ingenieria/evaluar-alineacion</code>)...';
+
+    const payload = {
+        equipo: document.getElementById('msAlinEquipo').value,
+        rpm: parseInt(document.getElementById('msAlinRpm').value, 10),
+        offset_paralelo_mils: parseFloat(document.getElementById('msAlinParalelo').value),
+        offset_angular_mils_pulg: 0.35,
+        vibracion_mms_rms: parseFloat(document.getElementById('msAlinVibracion').value)
+    };
+
+    try {
+        const resp = await fetch('/ms/ingenieria/evaluar-alineacion', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const data = await resp.json();
+        const colorDictamen = data.aprobado ? '#34d399' : '#f87171';
+
+        box.innerHTML = `
+            <div style="color: ${colorDictamen}; font-weight: 800; margin-bottom: 6px;">${data.aprobado ? '✅' : '⚠️'} ${data.dictamen_final}</div>
+            <div>• <strong>Evaluación API RP 686:</strong> Offset Paralelo ${data.evaluacion_api_686.offset_paralelo_medido_mils} mils (Máx: ${data.evaluacion_api_686.tolerancia_max_paralela_mils} mils) → <strong>${data.evaluacion_api_686.cumple_norma_api_686 ? 'CUMPLE' : 'FUERA DE NORMA'}</strong></div>
+            <div>• <strong>Evaluación ISO 10816-3:</strong> ${data.evaluacion_iso_10816.vibracion_medida_mms_rms} mm/s RMS → <span style="color: #38bdf8;">${data.evaluacion_iso_10816.clasificacion_zona}</span></div>
+        `;
+        cargarDatosMicroservicioAuditoria();
+    } catch (e) {
+        box.innerHTML = `<span style="color: #ef4444;">❌ Error comunicando con MS-1: ${e.message}</span>`;
+    }
+}
+
+async function cargarDatosMicroservicioAuditoria() {
+    const tbody = document.getElementById('msAuditoriaTablaBody');
+    const metricasBox = document.getElementById('msAuditoriaMetricasBox');
+    if (!tbody || !metricasBox) return;
+
+    try {
+        const [respBitacora, respMetricas] = await Promise.all([
+            fetch('/ms/auditoria/bitacora?limite=12'),
+            fetch('/ms/auditoria/metricas')
+        ]);
+        const bitacora = await respBitacora.json();
+        const metricas = await respMetricas.json();
+        const res = metricas.resumen || {};
+
+        metricasBox.innerHTML = `
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 11px; color: #94a3b8;">TOTAL EVENTOS AUDITADOS</div>
+                <div style="font-size: 22px; font-weight: 800; color: #38bdf8;">${res.total_eventos_auditados || 0}</div>
+            </div>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 11px; color: #94a3b8;">LATENCIA PROMEDIO</div>
+                <div style="font-size: 22px; font-weight: 800; color: #10b981;">${res.latencia_promedio_ms || 0} ms</div>
+            </div>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 11px; color: #94a3b8;">PATRÓN DE PERSISTENCIA</div>
+                <div style="font-size: 14px; font-weight: 700; color: #fbbf24; margin-top: 4px;">Database-per-Service</div>
+            </div>
+            <div style="background: #0f172a; border: 1px solid #334155; border-radius: 8px; padding: 10px 14px;">
+                <div style="font-size: 11px; color: #94a3b8;">ESTADO ECOSISTEMA</div>
+                <div style="font-size: 15px; font-weight: 800; color: #34d399; margin-top: 4px;">● ${metricas.estado_ecosistema || '100% Operativo'}</div>
+            </div>
+        `;
+
+        tbody.innerHTML = (bitacora.eventos || []).map(ev => {
+            const badgeColor = ev.estado === 'OK' ? '#10b981' : '#f59e0b';
+            return `
+                <tr style="border-bottom: 1px solid #1e293b;">
+                    <td style="padding: 8px 10px; color: #64748b; font-family: monospace;">#${ev.id}</td>
+                    <td style="padding: 8px 10px; color: #94a3b8; font-family: monospace;">${ev.fecha_hora}</td>
+                    <td style="padding: 8px 10px;"><span style="background: #0f172a; border: 1px solid #334155; color: #38bdf8; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-family: monospace;">${ev.servicio_origen}</span></td>
+                    <td style="padding: 8px 10px; font-weight: 600; color: #e2e8f0;">${ev.categoria}</td>
+                    <td style="padding: 8px 10px; color: #cbd5e1;">${ev.usuario}</td>
+                    <td style="padding: 8px 10px; color: #f1f5f9;">${ev.accion}</td>
+                    <td style="padding: 8px 10px; font-family: monospace; color: #34d399;">${ev.latencia_ms} ms</td>
+                    <td style="padding: 8px 10px;"><span style="background: ${badgeColor}22; color: ${badgeColor}; border: 1px solid ${badgeColor}55; padding: 2px 7px; border-radius: 4px; font-size: 11px; font-weight: 700;">${ev.estado}</span></td>
+                </tr>
+            `;
+        }).join('');
+    } catch (e) {
+        tbody.innerHTML = `<tr><td colspan="8" style="padding: 14px; color: #ef4444;">Error cargando MS-2: ${e.message}</td></tr>`;
+    }
+}
+

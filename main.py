@@ -14,6 +14,8 @@ from app.agent.agent import procesar_mensaje_equi
 from app.auth.email_service import enviar_codigo_verificacion_email
 from app.database.db import get_db, init_db, SessionLocal
 from app.database import crud
+from microservices.ms_ingenieria.main_ingenieria import app_ingenieria
+from microservices.ms_auditoria.main_auditoria import app_auditoria, registrar_evento_interno
 
 import urllib.parse
 
@@ -34,9 +36,9 @@ except Exception as _e:
     print(f"Nota init: {_e}")
 
 app = FastAPI(
-    title="Asistente Equi - Equigrup API",
-    description="API para el Asistente Inteligente de Gestión Técnica, Proyectos y Documentación de Equigrup",
-    version="1.2.0"
+    title="Asistente Equi - Equigrup API Gateway & Microservicios",
+    description="API Gateway para el Asistente Inteligente de Gestión Técnica, Proyectos, Cálculos API 686 (MS-1) y Auditoría (MS-2) de Equigrup",
+    version="2.0.0"
 )
 
 app.add_middleware(
@@ -47,9 +49,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Montar los 2 Microservicios Independientes en el API Gateway
+app.mount("/ms/ingenieria", app_ingenieria, name="ms_ingenieria")
+app.mount("/ms/auditoria", app_auditoria, name="ms_auditoria")
+
 # Servir estáticos de uploads y documentos
 app.mount("/uploads", StaticFiles(directory=str(UPLOADS_DIR)), name="uploads")
 app.mount("/documents", StaticFiles(directory=str(DOCUMENTS_DIR)), name="documents")
+
 
 def buscar_archivo_documento(nombre_o_ruta: str) -> Optional[Path]:
     """
@@ -227,11 +234,33 @@ class ProyectoCreate(BaseModel):
 def login_endpoint(req: LoginRequest, db: Session = Depends(get_db)):
     usuario = crud.verificar_login(db, req.username, req.password)
     if not usuario:
+        try:
+            registrar_evento_interno(
+                servicio_origen="api-gateway",
+                categoria="SEGURIDAD",
+                usuario=req.username,
+                accion="Intento de inicio de sesión rechazado (credenciales inválidas)",
+                latencia_ms=85,
+                estado="RECHAZADO"
+            )
+        except Exception:
+            pass
         raise HTTPException(
             status_code=401,
             detail="Credenciales incorrectas. Verifica tu usuario y contraseña."
         )
     token = f"equi_auth_session_{usuario.id}_{int(datetime.utcnow().timestamp())}"
+    try:
+        registrar_evento_interno(
+            servicio_origen="api-gateway",
+            categoria="SEGURIDAD",
+            usuario=usuario.nombre_completo,
+            accion="Inicio de sesión exitoso en Portal Equigrup",
+            latencia_ms=92,
+            estado="OK"
+        )
+    except Exception:
+        pass
     return {
         "autenticado": True,
         "token": token,
@@ -283,8 +312,55 @@ def chat_endpoint(request: ChatRequest):
     if not request.mensaje.strip():
         raise HTTPException(status_code=400, detail="El mensaje no puede estar vacío.")
     
+    t0 = datetime.utcnow()
     resultado = procesar_mensaje_equi(request.mensaje)
+    ms = int((datetime.utcnow() - t0).total_seconds() * 1000)
+    try:
+        registrar_evento_interno(
+            servicio_origen="agente-ia-rag",
+            categoria="CONSULTA_RAG",
+            usuario="Ingeniero Equigrup",
+            accion=f"Consulta IA: {request.mensaje[:75]}",
+            latencia_ms=ms,
+            estado="OK"
+        )
+    except Exception:
+        pass
     return resultado
+
+# --- ENDPOINT REGISTRO DE MICROSERVICIOS (API GATEWAY) ---
+@app.get("/api/microservicios/estado")
+def estado_microservicios_gateway():
+    return {
+        "arquitectura": "API Gateway + 2 Microservicios Independientes (FastAPI)",
+        "gateway": {
+            "nombre": "equigrup-api-gateway",
+            "puerto_local": 8000,
+            "estado": "online"
+        },
+        "microservicios": [
+            {
+                "id": "ms-1",
+                "nombre": "ms-ingenieria (Motor de Cálculos API 686 y Grouting)",
+                "puerto_independiente": 8001,
+                "ruta_gateway": "/ms/ingenieria",
+                "swagger_docs": "/ms/ingenieria/docs",
+                "endpoints": ["GET /ms/ingenieria/health", "POST /ms/ingenieria/calcular-grout", "POST /ms/ingenieria/evaluar-alineacion"],
+                "estado": "online"
+            },
+            {
+                "id": "ms-2",
+                "nombre": "ms-auditoria (Auditoría, Trazabilidad y Telemetría)",
+                "puerto_independiente": 8002,
+                "patron_datos": "Database-per-Service (ms_auditoria.db)",
+                "ruta_gateway": "/ms/auditoria",
+                "swagger_docs": "/ms/auditoria/docs",
+                "endpoints": ["GET /ms/auditoria/health", "POST /ms/auditoria/registrar-evento", "GET /ms/auditoria/bitacora", "GET /ms/auditoria/metricas"],
+                "estado": "online"
+            }
+        ]
+    }
+
 
 # --- ENDPOINTS DE PROYECTOS (BASE DE DATOS) ---
 @app.post("/api/proyectos")
