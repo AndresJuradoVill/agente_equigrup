@@ -332,7 +332,8 @@ def chat_endpoint(request: ChatRequest):
 @app.get("/api/microservicios/estado")
 def estado_microservicios_gateway():
     return {
-        "arquitectura": "API Gateway + 2 Microservicios Independientes (FastAPI)",
+        "arquitectura": "API Gateway ASGI Nativo + 2 Microservicios Independientes en Python/FastAPI (100% Sin Docker)",
+        "orquestacion": "Uvicorn ASGI Multi-Proceso (orquestador_microservicios.py) & Enrutamiento ASGI (app.mount)",
         "gateway": {
             "nombre": "equigrup-api-gateway",
             "puerto_local": 8000,

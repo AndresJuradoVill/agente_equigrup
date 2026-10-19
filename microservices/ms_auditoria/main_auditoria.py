@@ -177,3 +177,4 @@ def obtener_metricas_consolidado():
             "eventos_por_microservicio": por_servicio
         }
     }
+

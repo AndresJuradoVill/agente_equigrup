@@ -12,3 +12,4 @@ start "MS-2: Auditoria y Telemetria (Puerto 8002)" cmd /k ".venv\Scripts\python.
 start "API Gateway Equigrup (Puerto 8000)" cmd /k ".venv\Scripts\python.exe -m uvicorn main:app --port 8000 --reload"
 
 echo Los 3 servicios se han iniciado en terminales independientes.
+
