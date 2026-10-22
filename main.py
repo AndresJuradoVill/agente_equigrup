@@ -636,15 +636,17 @@ def estado_operativo_sistema(db: Session = Depends(get_db)):
         with sqlite3.connect(str(db_auditoria_path)) as conn:
             integridad_auditoria = conn.execute("PRAGMA integrity_check;").fetchone()[0]
 
-    registrar_evento_interno(
-        servicio_origen="cron-job-operacion",
-        tipo_evento="MANTENIMIENTO_OPERATIVO_AUTOMATICO",
-        endpoint="/api/operacion/status",
-        metodo_http="GET",
-        codigo_http=200,
-        latencia_ms=8.4,
-        detalle=f"Mantenimiento OK | equigrup.db: {integridad_principal} ({tamano_principal_kb} KB) | ms_auditoria.db: {integridad_auditoria}"
-    )
+    try:
+        registrar_evento_interno(
+            servicio_origen="cron-job-operacion",
+            categoria="MANTENIMIENTO_OPERATIVO",
+            usuario="Cron-Job.org Scheduler",
+            accion=f"Mantenimiento OK | equigrup.db: {integridad_principal} ({tamano_principal_kb} KB) | ms_auditoria.db: {integridad_auditoria}",
+            latencia_ms=8,
+            estado="OK"
+        )
+    except Exception:
+        pass
 
     return {
         "estado_operativo": "100% ONLINE - OPERACION AUTOMATIZADA ACTIVA",
