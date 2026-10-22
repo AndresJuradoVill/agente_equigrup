@@ -581,3 +581,27 @@ def panel_monitoreo_postman():
         )
     raise HTTPException(status_code=404, detail="Reporte de monitoreo no encontrado")
 
+@app.get("/sustentacion", include_in_schema=False)
+def panel_sustentacion_arquitectura():
+    p = BASE_DIR / "sustentacion_arquitectura_uml_equigrup.html"
+    if p.exists():
+        return FileResponse(str(p), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+    raise HTTPException(status_code=404, detail="Archivo no encontrado")
+
+@app.get("/wireframes", include_in_schema=False)
+@app.get("/wireframes_equigrup.html", include_in_schema=False)
+def panel_wireframes_equigrup():
+    p = BASE_DIR / "wireframes_equigrup.html"
+    if p.exists():
+        return FileResponse(str(p), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+    raise HTTPException(status_code=404, detail="Archivo no encontrado")
+
+@app.get("/mockups", include_in_schema=False)
+@app.get("/mockups_alta_fidelidad_equigrup.html", include_in_schema=False)
+def panel_mockups_equigrup():
+    p = BASE_DIR / "mockups_alta_fidelidad_equigrup.html"
+    if p.exists():
+        return FileResponse(str(p), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
+    raise HTTPException(status_code=404, detail="Archivo no encontrado")
+
+

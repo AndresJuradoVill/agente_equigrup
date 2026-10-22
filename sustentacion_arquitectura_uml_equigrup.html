@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Equigrup S.A.S. — Sustentación Entregables 1, 2 y 3 (SPA vs MPA, Site Map y Casos de Uso UML)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <script>
+        mermaid.initialize({ startOnLoad: true, theme: 'default', securityLevel: 'loose' });
+    </script>
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .tab-sec { display: none; }
+        .tab-sec.active { display: block; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-900">
+
+    <!-- BARRA SUPERIOR DE NAVEGACIÓN DE LA SUSTENTACIÓN -->
+    <header class="sticky top-0 z-50 bg-[#0F172A] text-white px-6 py-3.5 border-b border-slate-800 flex flex-wrap justify-between items-center gap-4 shadow-xl">
+        <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-lg bg-[#F97316] flex items-center justify-center font-black text-white">EQ</div>
+            <div>
+                <h1 class="font-bold text-sm">SUSTENTACIÓN DE INGENIERÍA DE SOFTWARE & ARQUITECTURA — EQUIGRUP S.A.S.</h1>
+                <p class="text-xs text-slate-400 mono">Entregables 1, 2 y 3 Renderizados + Enlaces Directos a Wireframes (4) y Mockups (5)</p>
+            </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <button onclick="showSec('sec1', this)" class="nav-b bg-[#F97316] text-white text-xs font-bold px-3.5 py-2 rounded-lg">1. Arquitectura SPA vs MPA</button>
+            <button onclick="showSec('sec2', this)" class="nav-b bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-700">2. Site Map (Diagrama Jerárquico)</button>
+            <button onclick="showSec('sec3', this)" class="nav-b bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-700">3. Casos de Uso UML + 5 Fichas</button>
+            <a href="wireframes_equigrup.html" target="_blank" class="bg-slate-700 hover:bg-slate-600 text-amber-300 text-xs font-bold px-3.5 py-2 rounded-lg border border-amber-400/40">📐 4. Abrir Wireframes ↗</a>
+            <a href="mockups_alta_fidelidad_equigrup.html" target="_blank" class="bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold px-3.5 py-2 rounded-lg shadow">🎨 5. Abrir Mockups UI ↗</a>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto py-8 px-6">
+
+        <!-- ===================================================================
+             ENTREGABLE 1: SPA VS MPA
+             =================================================================== -->
+        <section id="sec1" class="tab-sec active space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <span class="mono text-xs font-bold text-[#F97316] uppercase">Entregable 1 • Decisión Arquitectónica</span>
+                <h2 class="text-2xl font-extrabold text-[#0F172A] mt-1">Arquitectura Implementada: Single-Page Application (SPA) bajo Patrón MVVM</h2>
+                <p class="text-sm text-slate-600 mt-3 leading-relaxed">
+                    El sistema de <strong>Equigrup S.A.S.</strong> está construido como una <strong>Single-Page Application (SPA)</strong> reactiva bajo el patrón <strong>MVVM (Model-View-ViewModel)</strong> servida por un API Gateway en <strong>FastAPI</strong>. Todas las vistas operativas (<code>#vistaChat</code>, <code>#vistaProyectos</code>, <code>#vistaAgregar</code>, <code>#vistaMultimedia</code>, <code>#vistaBlog</code> y <code>#vistaMicroservicios</code>) conviven en un único contenedor DOM y se conmutan en memoria mediante <code>AppView.switchMainView()</code> sin recargar el navegador.
+                </p>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-6">
+                    <div class="bg-slate-900 text-white p-5 rounded-xl border-l-4 border-[#F97316]">
+                        <h3 class="font-bold text-sm text-[#F97316]">1. Persistencia del Chatbot IA (RAG)</h3>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            El <code>ChatViewModel</code> mantiene viva la sesión de conversación y las citas documentales (<code>API 686.pdf</code>, <code>EG24-184S</code>) en memoria RAM mientras el ingeniero navega al catálogo de los 52 proyectos o calcula dosificación de Grout en el Microservicio 1.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900 text-white p-5 rounded-xl border-l-4 border-sky-400">
+                        <h3 class="font-bold text-sm text-sky-400">2. Consumo Eficiente REST (FastAPI)</h3>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            El filtrado por cliente (Ecopetrol, Cenit, ArcelorMittal), maquinaria (Waukesha, Booster) o estado se ejecuta en cliente en <code>&lt; 2 ms</code> sobre el dataset JSON sin recargar plantillas HTML ni saturar SQLite.
+                        </p>
+                    </div>
+                    <div class="bg-slate-900 text-white p-5 rounded-xl border-l-4 border-emerald-400">
+                        <h3 class="font-bold text-sm text-emerald-400">3. Rendimiento, UX y Banner CMS</h3>
+                        <p class="text-xs text-slate-300 mt-2 leading-relaxed">
+                            Consumo de apenas <code>~42 MB RAM</code> en el servidor Render Cloud y actualización instantánea del Banner Hero autogestionable (<code>GET /api/blog?solo_banner=true</code>).
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TABLA COMPARATIVA SPA VS MPA -->
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm overflow-x-auto">
+                <h3 class="font-bold text-base text-[#0F172A] mb-4">Tabla Comparativa Técnica: SPA vs. MPA en el Caso Real Equigrup</h3>
+                <table class="w-full text-left border-collapse text-xs">
+                    <thead>
+                        <tr class="bg-[#0F172A] text-white mono uppercase">
+                            <th class="p-3.5">Criterio Técnico</th>
+                            <th class="p-3.5">SPA Implementada (Equigrup MVVM)</th>
+                            <th class="p-3.5">MPA Tradicional (Server-Side)</th>
+                            <th class="p-3.5">Beneficio Directo para Equigrup</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-200">
+                        <tr>
+                            <td class="p-3.5 font-bold">Estado de la Ventana del Chatbot RAG</td>
+                            <td class="p-3.5 text-emerald-700 font-semibold">100% Persistente al cambiar de pestaña</td>
+                            <td class="p-3.5 text-slate-500">Se pierde al cambiar de página URL</td>
+                            <td class="p-3.5">Permite consultar la norma API 686 y verificar el proyecto EG24-184S sin perder el chat.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3.5 font-bold">Filtrado de los 248 Registros / 52 Proyectos</td>
+                            <td class="p-3.5 text-emerald-700 font-semibold">Reactivo en Memoria (&lt; 2 ms)</td>
+                            <td class="p-3.5 text-slate-500">Recarga HTTP completa (400 - 1200 ms)</td>
+                            <td class="p-3.5">Búsqueda instantánea en campo para obras de Ecopetrol, Cenit, Reficar y Veolia.</td>
+                        </tr>
+                        <tr>
+                            <td class="p-3.5 font-bold">Comunicación con Microservicios (MS-1 y MS-2)</td>
+                            <td class="p-3.5 text-emerald-700 font-semibold">Asíncrona vía fetch() JSON</td>
+                            <td class="p-3.5 text-slate-500">Envío de formulario síncrono</td>
+                            <td class="p-3.5">Calcula kits de Chockfast Red y actualiza la bitácora de auditoría en vivo.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ENTREGABLE 2: SITE MAP (DIAGRAMA JERÁRQUICO)
+             =================================================================== -->
+        <section id="sec2" class="tab-sec space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <span class="mono text-xs font-bold text-[#F97316] uppercase">Entregable 2 • Arquitectura de Información</span>
+                <h2 class="text-2xl font-extrabold text-[#0F172A] mt-1 mb-4">Site Map Jerárquico: Portal Público Autogestionable + Plataforma Interna IA & Microservicios</h2>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 overflow-x-auto">
+                    <div class="mermaid">
+graph TD
+    ROOT["🌐 Ecosistema Web Equigrup S.A.S. (https://agente-equigrup.onrender.com)"]
+    PUBLIC["🏢 ENTORNO 1: Portal Público Autogestionable (Landing & Vitrina)"]
+    INTERNAL["🔐 ENTORNO 2: Plataforma Interna Operaciones, IA RAG & Microservicios"]
+
+    ROOT --> PUBLIC
+    ROOT --> INTERNAL
+
+    PUB1["1.1 Hero Banner Dinámico (/#inicio)"]
+    PUB2["1.2 Especialidades API 686 & Grouting (/#servicios)"]
+    PUB3["1.3 Clientes & Obras Destacadas (Ecopetrol, Cenit, Reficar)"]
+    PUB4["1.4 Widget Flotante Chatbot IA"]
+
+    PUBLIC --> PUB1
+    PUBLIC --> PUB2
+    PUBLIC --> PUB3
+    PUBLIC --> PUB4
+
+    INT_AUTH["2.0 Seguridad Login & OTP (/api/auth/*)"]
+    INT_CHAT["2.1 Consola Chatbot IA RAG + SQL (/#vistaChat)"]
+    INT_EXP["2.2 Explorador Documental & 52 Proyectos (/#vistaProyectos)"]
+    INT_CMS["2.3 Admin CMS: Proyectos, Multimedia & Banner (/#vistaBlog)"]
+    INT_MS["2.4 Microservicios MS-1, MS-2 & Monitor Postman (/monitoreo)"]
+
+    INTERNAL --> INT_AUTH
+    INTERNAL --> INT_CHAT
+    INTERNAL --> INT_EXP
+    INTERNAL --> INT_CMS
+    INTERNAL --> INT_MS
+
+    M0["0.0 Normativa (API 686)"]
+    M1["0.1 Informes (EG24-184S, EG23-133S)"]
+    M2["0.2 Cotizaciones APU (EG24-189C)"]
+    M3["0.3 Procedimientos (PAC-EG-073)"]
+    MSQL["TABLA_PROYECTOS_SQL (52 Obras SQLite)"]
+
+    INT_EXP --> M0
+    INT_EXP --> M1
+    INT_EXP --> M2
+    INT_EXP --> M3
+    INT_EXP --> MSQL
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ===================================================================
+             ENTREGABLE 3: CASOS DE USO UML + 5 FICHAS TÉCNICAS
+             =================================================================== -->
+        <section id="sec3" class="tab-sec space-y-6">
+            <div class="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm">
+                <span class="mono text-xs font-bold text-[#F97316] uppercase">Entregable 3 • Ingeniería de Requisitos UML</span>
+                <h2 class="text-2xl font-extrabold text-[#0F172A] mt-1 mb-4">Diagrama de Casos de Uso UML (Actores, Límite del Sistema, &lt;&lt;include&gt;&gt; y &lt;&lt;extend&gt;&gt;)</h2>
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 overflow-x-auto">
+                    <div class="mermaid">
+flowchart LR
+    VIS(["👤 Visitante / Cliente Potencial"])
+    ING(["👷‍♂️ Ingeniero de Operaciones / Consultor"])
+    ADM(["🛡️ Administrador del Sistema"])
+
+    ING -.-> VIS
+    ADM -.-> ING
+
+    subgraph SYS ["🏢 SISTEMA EQUIGRUP: PORTAL AUTOGESTIONABLE + CHATBOT RAG + MICROSERVICIOS"]
+        CU00(["CU-00: Visualizar Landing, Servicios API 686 y Banner"])
+        CU01(["CU-01: Consultar Asistente IA mediante RAG y SQL Tool"])
+        CU02(["CU-02: Filtrar y Visualizar Informes Técnicos y APU"])
+        CU03(["CU-03: Autogestionar Contenido Web y Banner Hero (CMS)"])
+        CU04(["CU-04: Indexar y Auditar Documentos en el Motor RAG"])
+        CU05(["CU-05: Registrar y Actualizar Proyectos en SQLite"])
+        CU07(["CU-07: Calcular Grout y Evaluar Alineación API 686 (MS-1)"])
+
+        INC_RAG(["Buscar Chunks en equigrup_rag.db"])
+        INC_SQL(["Consultar 52 Proyectos en SQLite"])
+        EXT_PDF(["Abrir Manual o Informe PDF Original"])
+        INC_AUD(["Registrar Traza en Microservicio 2 (ms_auditoria.db)"])
+    end
+
+    RAG(["🤖 Actor Secundario: Motor IA / Servicio RAG"])
+
+    VIS --> CU00
+    ING --> CU01
+    ING --> CU02
+    ING --> CU07
+    ADM --> CU03
+    ADM --> CU04
+    ADM --> CU05
+
+    CU01 ==>|"<<include>>"| INC_RAG
+    CU01 ==>|"<<include>>"| INC_SQL
+    CU01 ==>|"<<include>>"| INC_AUD
+    EXT_PDF -.->|"<<extend>>"| CU01
+    EXT_PDF -.->|"<<extend>>"| CU02
+    CU07 ==>|"<<include>>"| INC_AUD
+
+    INC_RAG --> RAG
+    INC_SQL --> RAG
+    CU04 --> RAG
+                    </div>
+                </div>
+            </div>
+
+            <!-- RESUMEN DE LAS 5 FICHAS TÉCNICAS -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="mono text-xs font-bold text-[#1E3A8A]">FICHA TÉCNICA CU-01</span>
+                    <h4 class="font-bold text-sm mt-1">Consultar Asistente IA mediante RAG y SQL Tool</h4>
+                    <p class="text-xs text-slate-600 mt-2"><strong>Actor:</strong> Ingeniero de Operaciones + Motor IA RAG.<br><strong>Incluye:</strong> Búsqueda en <code>equigrup_rag.db</code> (109 chunks) + Consulta en <code>equigrup_proyectos.db</code> (52 proyectos) + Registro en Microservicio 2.<br><strong>Extiende:</strong> Apertura del PDF original (<code>API 686.pdf</code>, <code>EG24-184S</code>).</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="mono text-xs font-bold text-[#1E3A8A]">FICHA TÉCNICA CU-02</span>
+                    <h4 class="font-bold text-sm mt-1">Filtrar y Visualizar Informes Técnicos, APU y Proyectos</h4>
+                    <p class="text-xs text-slate-600 mt-2"><strong>Actor:</strong> Ingeniero de Operaciones / Consultor.<br><strong>Flujo:</strong> Filtrado facetado por <code>carpeta_modulo</code> (0.0 a 0.3 y SQL), <code>cliente_entidad</code> (Cenit, Ecopetrol, ArcelorMittal) y visualización en línea de informes PDF.</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="mono text-xs font-bold text-[#1E3A8A]">FICHA TÉCNICA CU-03</span>
+                    <h4 class="font-bold text-sm mt-1">Autogestionar Contenido de la Página Web y Banner Hero</h4>
+                    <p class="text-xs text-slate-600 mt-2"><strong>Actor:</strong> Administrador del Sistema.<br><strong>Flujo:</strong> Publicación de obras en <code>POST /api/blog/publicar</code> con fotos/videos MP4 y activación con un clic en el Banner Principal (<code>es_banner=True</code>).</p>
+                </div>
+                <div class="bg-white p-5 rounded-xl border border-slate-200 shadow-sm">
+                    <span class="mono text-xs font-bold text-[#1E3A8A]">FICHAS TÉCNICAS CU-04 & CU-05</span>
+                    <h4 class="font-bold text-sm mt-1">Indexar/Auditar Motor RAG y Administrar Proyectos SQLite</h4>
+                    <p class="text-xs text-slate-600 mt-2"><strong>Actor:</strong> Administrador del Sistema + Motor IA.<br><strong>Flujo:</strong> Extracción con PyPDF/python-docx hacia <code>equigrup_rag.db</code>, auditoría de cobertura (<code>indexado_rag</code>) y CRUD transaccional sobre los 52 proyectos.</p>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        function showSec(id, btn) {
+            document.querySelectorAll('.tab-sec').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-b').forEach(b => {
+                b.className = 'nav-b bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-semibold px-3.5 py-2 rounded-lg border border-slate-700';
+            });
+            document.getElementById(id).classList.add('active');
+            btn.className = 'nav-b bg-[#F97316] text-white text-xs font-bold px-3.5 py-2 rounded-lg';
+            mermaid.init(undefined, document.querySelectorAll('#' + id + ' .mermaid'));
+        }
+    </script>
+</body>
+</html>
+
