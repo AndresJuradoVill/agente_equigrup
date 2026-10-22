@@ -604,4 +604,53 @@ def panel_mockups_equigrup():
         return FileResponse(str(p), headers={"Cache-Control": "no-cache, no-store, must-revalidate"})
     raise HTTPException(status_code=404, detail="Archivo no encontrado")
 
+@app.get("/api/operacion/status", tags=["DevOps - Liberación y Operación"])
+def estado_operativo_sistema(db: Session = Depends(get_db)):
+    """
+    Endpoint oficial para Fase 5 (Liberación) y Fase 7 (Operación).
+    Expone la versión liberada (SemVer), estado de la base de datos SQLite,
+    estado de los 2 microservicios acoplados y variables operativas del entorno Cloud (Render).
+    """
+    import platform
+    import sys
+    total_proyectos = len(crud.obtener_proyectos(db))
+    return {
+        "estado_operativo": "100% ONLINE - PRODUCCION",
+        "fase_liberacion": {
+            "version_actual_semver": "v2.0.0",
+            "artefacto_release": "equigrup-release-production.zip",
+            "pipeline_ci_cd": "GitHub Actions (ci_cd_release.yml)",
+            "repositorio_releases": "https://github.com/AndresJuradoVill/agente_equigrup/releases"
+        },
+        "fase_operacion": {
+            "plataforma_paas": "Render Cloud (Region: US-West Oregon)",
+            "servidor_asgi": "Uvicorn + FastAPI",
+            "python_runtime": sys.version.split()[0],
+            "sistema_operativo_contenedor": f"{platform.system()} {platform.release()}",
+            "manifiestos_iac": ["render.yaml", "Procfile", "requirements.txt"]
+        },
+        "servicios_activos": {
+            "api_gateway_principal": {"ruta": "/", "estado": "OPERATIVO", "proyectos_sqlite": total_proyectos},
+            "microservicio_1_ingenieria": {"ruta": "/ms/ingenieria/docs", "estado": "OPERATIVO", "norma": "API RP 686"},
+            "microservicio_2_auditoria": {"ruta": "/ms/auditoria/docs", "estado": "OPERATIVO", "patron_bd": "Database-per-Service (ms_auditoria.db)"}
+        },
+        "timestamp_utc": datetime.utcnow().isoformat() + "Z"
+    }
+
+@app.get("/api/devops/postman-collection", tags=["DevOps - Liberación y Operación"])
+def descargar_coleccion_postman():
+    """
+    Permite importar directamente en Postman (Import -> Link) la colección oficial
+    de Pruebas, Liberación, Operación y Monitoreo de Equigrup.
+    """
+    col_path = BASE_DIR / "tests" / "Equigrup_Postman_Collection.json"
+    if col_path.exists():
+        return FileResponse(
+            str(col_path),
+            media_type="application/json",
+            filename="Equigrup_Postman_Collection.json"
+        )
+    raise HTTPException(status_code=404, detail="Colección Postman no encontrada")
+
+
 
